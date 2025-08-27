@@ -25,7 +25,7 @@ class UserSeeder extends Seeder
 
         User::create([
             'name' => 'Dimas',
-            'email' => 'dimas@gmial.com',
+            'email' => 'dimas@gmaill.com',
             'password' => hash::make('dimas42'),
             'role' => 'warga',
             'address' => 'Desa Misal, Jl.Contoh No. 123',

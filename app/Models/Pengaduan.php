@@ -9,11 +9,10 @@ class Pengaduan extends Model
 {
     use HasFactory;
 
+
     protected $fillable = [
-        'user_id',
         'judul',
         'isi',
-        'tanggal_pengaduan',
         'foto',
         'kategori',
     ];
@@ -26,6 +25,5 @@ class Pengaduan extends Model
     {
         return $this->hasMany(Tanggapan::class);
     }
-
-
+    
 }

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pengaduan;
 use Illuminate\Http\Request;
+use App\Models\Pengaduan;
 
 class PengaduanController extends Controller
 {
@@ -12,8 +12,8 @@ class PengaduanController extends Controller
      */
     public function index()
     {
-        Pengaduan::all();
-        return view('pengaduan.index', compact('pengaduans'));
+        $pengaduans = Pengaduan::all();
+        return view('pengaduans.index' , compact('pengaduans'));
     }
 
     /**
@@ -21,7 +21,7 @@ class PengaduanController extends Controller
      */
     public function create()
     {
-        return view('pengaduan.create');
+        return view('pengaduans.create');
     }
 
     /**
@@ -29,16 +29,27 @@ class PengaduanController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
+        $request->validate([
             'judul' => 'required|string|max:255',
             'isi' => 'required|string',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'foto' => 'nullable|image|max:2048',
             'kategori' => 'required|string|max:100',
         ]);
 
-        Pengaduan::create($validated);
+        $pengaduan = new Pengaduan();
+        $pengaduan->judul = $request->judul;
+        $pengaduan->isi = $request->isi;
+        $pengaduan->kategori = $request->kategori;
+        $pengaduan->user_id = auth()->id();
 
-        return redirect()->route('pengaduan.index')->with('success', 'Pengaduan created successfully.');
+        if ($request->hasFile('foto')) {
+            $path = $request->file('foto')->store('public/fotos');
+            $pengaduan->foto = basename($path);
+        }
+
+        $pengaduan->save();
+
+        return redirect()->route('pengaduans.index')->with('success', 'Pengaduan berhasil dibuat.');
     }
 
     /**
@@ -46,7 +57,8 @@ class PengaduanController extends Controller
      */
     public function show(string $id)
     {
-        return view('pengaduan.show', compact('pengaduan'));
+        $pengaduan = Pengaduan::findOrFail($id);
+        return view('pengaduans.show', compact('pengaduan'));
     }
 
     /**
@@ -54,7 +66,7 @@ class PengaduanController extends Controller
      */
     public function edit(string $id)
     {
-        return view('pengaduan.edit', compact('pengaduan'));
+        //
     }
 
     /**
@@ -62,24 +74,14 @@ class PengaduanController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $validated = $request->validate([
-            'judul' => 'required|string|max:255',
-            'isi' => 'required|string',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'kategori' => 'required|string|max:100',
-        ]);
-
-        Pengaduan::update($validated);
-
-        return redirect()->route('pengaduan.index')->with('success', 'Pengaduan updated successfully.');
+        //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Pengaduan $pengaduan)
+    public function destroy(string $id)
     {
-        $pengaduan->delete();
-        return redirect()->route('pengaduan.index')->with('success', 'Pengaduan deleted successfully.');
+        //
     }
 }

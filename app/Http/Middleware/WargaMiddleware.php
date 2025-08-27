@@ -11,7 +11,7 @@ class WargaMiddleware
 {
     /**
      * Handle an incoming request.
-     *
+     * 
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
@@ -19,8 +19,9 @@ class WargaMiddleware
         if (!Auth::check()) {
             return redirect()->route('login');
         }
+
         if (!Auth::user()->isWarga()) {
-            abort(403, 'Akses ditolak. Hanya warga yang bisa mengakses halaman ini.');
+            abort(403, 'Akses ditolak. Hanya admin yang bisa mengakses halaman ini.');
         }
         return $next($request);
     }

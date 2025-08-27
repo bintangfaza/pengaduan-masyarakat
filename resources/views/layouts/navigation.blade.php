@@ -15,6 +15,29 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                     @if(auth()->user()->isAdmin())
+                    <x-nav-link  >
+                        {{ __('Kelola Pengaduan') }}
+                    </x-nav-link>
+                    <x-nav-link  >
+                        {{ __('Kategori Pengaduan') }}
+                    </x-nav-link>
+                    <x-nav-link  >
+                        {{ __('Tanggapan') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">
+                        {{ __('Kelola User') }}
+                    </x-nav-link>
+                    @endif
+
+                    @if(auth()->user()->isWarga())
+                    <x-nav-link :href="route('pengaduans.index')" :active="request()->routeIs('pengaduans.index')">
+                        {{ __('Pengaduan') }}
+                    </x-nav-link>
+                    <x-nav-link >
+                        {{ __('Riwayat pengaduan') }}
+                    </x-nav-link>
+                    @endif
                 </div>
             </div>
 

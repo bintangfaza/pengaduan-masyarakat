@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('pengaduan', function (Blueprint $table) {
+        Schema::table('pengaduans', function (Blueprint $table) {
             $table->enum('status', ['pending', 'proses', 'selesai'])->default('pending')->after('kategori');
         });
     }
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('pengaduan', function (Blueprint $table) {
+        Schema::table('pengaduans', function (Blueprint $table) {
             $table->dropColumn('status');
         });
     }

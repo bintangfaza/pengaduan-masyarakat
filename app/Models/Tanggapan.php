@@ -9,6 +9,7 @@ class Tanggapan extends Model
 {
     use HasFactory;
 
+
     protected $fillable = [
         'pengaduan_id',
         'user_id',
