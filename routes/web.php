@@ -31,6 +31,11 @@ Route::middleware(['auth'])->group(function () {
     // Kalau ingin semua user (admin & warga) bisa lihat daftar pengaduan
     Route::resource('pengaduans', PengaduanController::class);
 
+    Route::post('/pengaduans/{pengaduan}/tanggapans', [TanggapanController::class, 'store'])
+        ->name('tanggapans.store');
+
+
+
     // Profile (opsional, aktifkan kalau memang dipakai)
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -45,16 +50,13 @@ Route::middleware(['auth', 'admin'])->group(function () {
         $totalTanggapan = Tanggapan::count();
         return view('admin.dashboard', compact('totalPengaduan', 'totalUsers', 'totalTanggapan'));
     })->name('admin.dashboard');
-    
+
     Route::resource('/admin/users', UserController::class)
         ->only(['index', 'destroy'])
         ->names([
             'index' => 'admin.users.index',
             'destroy' => 'admin.users.destroy',
         ]);
-    
-
-    
 });
 
 // Warga
@@ -63,7 +65,8 @@ Route::middleware(['auth', 'warga'])->group(function () {
         $todayAduan = Pengaduan::whereDate('created_at', now()->toDateString())->get();
         return view('warga.dashboard', compact('todayAduan'));
     })->name('warga.dashboard');
-
+    Route::get('/warga/riwayat', [\App\Http\Controllers\PengaduanController::class, 'riwayat'])
+        ->name('warga.riwayat');
 });
 
 require __DIR__ . '/auth.php';

@@ -6,7 +6,7 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('dashboard') }}">
-                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
+                        <img src="{{ asset('storage/logo.png') }}" alt="Logo" class="block h-12 w-auto">
                     </a>
                 </div>
 
@@ -16,15 +16,13 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                      @if(auth()->user()->isAdmin())
-                    <x-nav-link  >
+                    <x-nav-link :href="route('pengaduans.index')" :active="request()->routeIs('pengaduans.index')">
                         {{ __('Kelola Pengaduan') }}
                     </x-nav-link>
                     <x-nav-link  >
                         {{ __('Kategori Pengaduan') }}
                     </x-nav-link>
-                    <x-nav-link  >
-                        {{ __('Tanggapan') }}
-                    </x-nav-link>
+
                     <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">
                         {{ __('Kelola User') }}
                     </x-nav-link>
@@ -34,7 +32,7 @@
                     <x-nav-link :href="route('pengaduans.index')" :active="request()->routeIs('pengaduans.index')">
                         {{ __('Pengaduan') }}
                     </x-nav-link>
-                    <x-nav-link >
+                    <x-nav-link  :href="route('warga.riwayat')" :active="request()->routeIs('warga.riwayat')">
                         {{ __('Riwayat pengaduan') }}
                     </x-nav-link>
                     @endif

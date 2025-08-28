@@ -4,16 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Tanggapan;
+use App\Models\Pengaduan;
+use Illuminate\Support\Facades\Auth;
 
 class TanggapanController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Pengaduan $pengaduan)
     {
-        Tanggapan::all();
-        return view('tanggapan.index', compact('tanggapans'));
+        $tanggapans = $pengaduan->tanggapans()->latest()->get();
+        return view('tanggapans.index', compact('pengaduan', 'tanggapans'));
     }
 
     /**
@@ -21,32 +23,41 @@ class TanggapanController extends Controller
      */
     public function create()
     {
-        return view('tanggapan.create');
+        //
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, $pengaduan_id)
     {
-        $validated = $request->validate([
-            'pengaduan_id' => 'required|exists:pengaduans,id',
-            'user_id' => 'required|exists:users,id',
-            'tanggapan' => 'required|string|max:1000',
-            'tanggal_tanggapan' => 'required|date',
+        $request->validate([
+            'isi_tanggapan' => 'required|string',
+            'status' => 'required|in:pending,proses,selesai',
         ]);
 
-        Tanggapan::create($validated);
+        $pengaduan = Pengaduan::findOrFail($pengaduan_id);
 
-        return redirect()->route('tanggapan.index')->with('success', 'Tanggapan created successfully.');
+        // Simpan tanggapan
+        $tanggapan = new Tanggapan();
+        $tanggapan->pengaduan_id = $pengaduan->id;
+        $tanggapan->user_id = Auth::id(); // admin yang login
+        $tanggapan->isi_tanggapan = $request->isi_tanggapan;
+        $tanggapan->save();
+
+        // Update status pengaduan sesuai pilihan admin
+        $pengaduan->status = $request->status;
+        $pengaduan->save();
+
+        return redirect()->back()->with('success', 'Tanggapan berhasil dikirim.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Pengaduan $pengaduan, Tanggapan $tanggapan)
     {
-        return view('tanggapan.show', compact('tanggapan'));
+        return view('tanggapans.show', compact('pengaduan', 'tanggapan'));
     }
 
     /**
@@ -54,7 +65,7 @@ class TanggapanController extends Controller
      */
     public function edit(string $id)
     {
-        return view('tanggapan.edit', compact('tanggapan'));
+        //
     }
 
     /**
@@ -62,25 +73,15 @@ class TanggapanController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $validated = $request->validate([
-            'pengaduan_id' => 'required|exists:pengaduans,id',
-            'user_id' => 'required|exists:users,id',
-            'tanggapan' => 'required|string|max:1000',
-            'tanggal_tanggapan' => 'required|date',
-        ]);
-
-        Tanggapan::where('id', $id)->update($validated);
-
-        return redirect()->route('tanggapan.index')->with('success', 'Tanggapan updated successfully.');
+        //
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Tanggapan $tanggapan)
+    public function destroy(Pengaduan $pengaduan, Tanggapan $tanggapan)
     {
         $tanggapan->delete();
-        return redirect()->route('tanggapan.index')->with('success', 'Tanggapan deleted successfully.');
+        return redirect()->route('tanggapans.index', $pengaduan)->with('success', 'Tanggapan berhasil dihapus');
     }
-   
 }

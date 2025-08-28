@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Pengaduan;
+use App\Models\User;
+use Illuminate\Support\Str;
 
 class PengaduanController extends Controller
 {
@@ -12,8 +14,12 @@ class PengaduanController extends Controller
      */
     public function index()
     {
-        $pengaduans = Pengaduan::all();
-        return view('pengaduans.index' , compact('pengaduans'));
+        if (auth()->user()->isAdmin()) {
+            $pengaduans = Pengaduan::all();
+        } else {
+            $pengaduans = Pengaduan::where('user_id', auth()->id())->get();
+        }
+        return view('pengaduans.index', compact('pengaduans'));
     }
 
     /**
@@ -42,14 +48,18 @@ class PengaduanController extends Controller
         $pengaduan->kategori = $request->kategori;
         $pengaduan->user_id = auth()->id();
 
+        // Simpan file foto
         if ($request->hasFile('foto')) {
-            $path = $request->file('foto')->store('public/fotos');
-            $pengaduan->foto = basename($path);
+            $image = $request->file('foto');
+            $imageName = time() . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
+            $imagePath = $image->storeAs('fotos', $imageName, 'public');
+            $pengaduan->foto = $imagePath; // simpan path lengkap (fotos/namafile.jpg)
         }
 
         $pengaduan->save();
 
-        return redirect()->route('pengaduans.index')->with('success', 'Pengaduan berhasil dibuat.');
+        return redirect()->route('pengaduans.index')
+            ->with('success', 'Pengaduan berhasil dibuat.');
     }
 
     /**
@@ -83,5 +93,15 @@ class PengaduanController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function riwayat()
+    {
+        $riwayat = Pengaduan::with('tanggapans')
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->get();
+
+        return view('warga.riwayat', compact('riwayat'));
     }
 }
