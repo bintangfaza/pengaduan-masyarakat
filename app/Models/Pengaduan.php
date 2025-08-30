@@ -26,5 +26,10 @@ class Pengaduan extends Model
     {
         return $this->hasMany(Tanggapan::class);
     }
+    
+    public static function filterByStatus($status)
+    {
+        return self::where('status', $status)->get();
+    }
 
 }

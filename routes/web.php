@@ -14,7 +14,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Route untuk semua user yang sudah login
+// Route login (user dan admin) 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
         $user = auth()->user();
@@ -28,12 +28,12 @@ Route::middleware(['auth'])->group(function () {
         return view('dashboard');
     })->name('dashboard');
 
-    // Kalau ingin semua user (admin & warga) bisa lihat daftar pengaduan
+    
     Route::resource('pengaduans', PengaduanController::class);
-
+    Route::delete('/pengaduans/{pengaduan}/riwayat', [PengaduanController::class, 'destroyRiwayat'])
+        ->name('pengaduans.destroyRiwayat');
     Route::post('/pengaduans/{pengaduan}/tanggapans', [TanggapanController::class, 'store'])
         ->name('tanggapans.store');
-
 
 
     // Profile (opsional, aktifkan kalau memang dipakai)
@@ -46,9 +46,12 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard', function () {
         $totalPengaduan = Pengaduan::count();
-        $totalUsers = User::count();
-        $totalTanggapan = Tanggapan::count();
-        return view('admin.dashboard', compact('totalPengaduan', 'totalUsers', 'totalTanggapan'));
+        $totalUsers = User::where('role', 'warga')->count();
+        $selesaiAduan = Pengaduan::where('status', 'selesai')->count();
+        $prosesAduan = Pengaduan::where('status', 'proses')->count();
+        $pendingAduan = Pengaduan::where('status', 'pending')->count();
+        
+        return view('admin.dashboard', compact('totalPengaduan', 'totalUsers', 'selesaiAduan', 'prosesAduan', 'pendingAduan'));
     })->name('admin.dashboard');
 
     Route::resource('/admin/users', UserController::class)
@@ -62,11 +65,18 @@ Route::middleware(['auth', 'admin'])->group(function () {
 // Warga
 Route::middleware(['auth', 'warga'])->group(function () {
     Route::get('/warga/dashboard', function () {
-        $todayAduan = Pengaduan::whereDate('created_at', now()->toDateString())->get();
-        return view('warga.dashboard', compact('todayAduan'));
+        $totalPengaduan = Pengaduan::count();
+        $selesaiAduan = Pengaduan::where('status', 'selesai')->count();
+        $prosesAduan = Pengaduan::where('status', 'proses')->count();
+        $pendingAduan = Pengaduan::where('status', 'pending')->count();
+        $pengaduanTerbaru = Pengaduan::latest()->take(6)->get();
+        return view('warga.dashboard', compact('totalPengaduan', 'selesaiAduan', 'prosesAduan', 'pendingAduan', 'pengaduanTerbaru'));
     })->name('warga.dashboard');
-    Route::get('/warga/riwayat', [\App\Http\Controllers\PengaduanController::class, 'riwayat'])
-        ->name('warga.riwayat');
+
+    Route::get('/warga/riwayat', function () {
+        $riwayat = Pengaduan::where('user_id', auth()->id())->latest()->get();
+        return view('warga.riwayat', compact('riwayat'));
+    })->name('warga.riwayat');
 });
 
 require __DIR__ . '/auth.php';

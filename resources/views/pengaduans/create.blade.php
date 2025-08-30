@@ -20,15 +20,11 @@
                     {{-- Form tambah pengaduan --}}
                     <form method="POST" action="{{ route('pengaduans.store') }}" enctype="multipart/form-data" class="space-y-4">
                         @csrf
-
-                        <!-- Judul -->
                         <div>
                             <x-input-label for="judul" :value="__('Judul')" />
                             <x-text-input id="judul" name="judul" type="text" class="mt-1 block w-full" required />
                             <x-input-error :messages="$errors->get('judul')" class="mt-2" />
                         </div>
-
-                        <!-- Isi -->
                         <div>
                             <x-input-label for="isi" :value="__('Isi')" />
                             <textarea id="isi" name="isi" rows="4"
@@ -36,8 +32,6 @@
                                 required></textarea>
                             <x-input-error :messages="$errors->get('isi')" class="mt-2" />
                         </div>
-
-                        <!-- Foto -->
                         <div>
                             <x-input-label for="foto" :value="__('Foto')" />
                             <input type="file" id="foto" name="foto"
@@ -47,7 +41,6 @@
                             <x-input-error :messages="$errors->get('foto')" class="mt-2" />
                         </div>
 
-                        <!-- Kategori -->
                         <div>
                             <x-input-label for="kategori" :value="__('Kategori')" />
                             <select id="kategori" name="kategori"
@@ -63,7 +56,6 @@
                             <x-input-error :messages="$errors->get('kategori')" class="mt-2" />
                         </div>
 
-                        <!-- Tombol Submit -->
                         <div>
                             <x-primary-button>{{ __('Kirim Pengaduan') }}</x-primary-button>
                         </div>

@@ -38,6 +38,11 @@
             {{ $slot }}
         </main>
     </div>
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6 text-center">
+        <p>&copy; {{ date('Y') }} Pengaduan Masyarakat | Dibuat dengan ❤️ Laravel + Tailwind</p>
+    </footer>
+
 </body>
 
 </html>

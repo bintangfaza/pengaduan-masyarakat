@@ -37,15 +37,13 @@ class TanggapanController extends Controller
         ]);
 
         $pengaduan = Pengaduan::findOrFail($pengaduan_id);
-
-        // Simpan tanggapan
         $tanggapan = new Tanggapan();
         $tanggapan->pengaduan_id = $pengaduan->id;
-        $tanggapan->user_id = Auth::id(); // admin yang login
+        $tanggapan->user_id = Auth::id(); 
         $tanggapan->isi_tanggapan = $request->isi_tanggapan;
         $tanggapan->save();
 
-        // Update status pengaduan sesuai pilihan admin
+        
         $pengaduan->status = $request->status;
         $pengaduan->save();
 

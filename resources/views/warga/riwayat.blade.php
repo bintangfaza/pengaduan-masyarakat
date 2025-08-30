@@ -1,14 +1,31 @@
 <x-app-layout>
-    <div class="max-w-5xl mx-auto">
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold text-gray-800">Daftar Pengaduan Saya</h2>
+    <div class="max-w-7xl mx-auto">
+        @if (session('success'))
+        <div
+            x-data="{ show: true }"
+            x-show="show"
+            x-transition
+            x-init="setTimeout(() => show = false, 3000)"
+            class="mb-4 p-4 rounded-lg bg-green-100 text-green-700 shadow-sm">
+            {{ session('success') }}    
         </div>
+        @endif
+        @if (session('error'))
+        <div
+            x-data="{ show: true }"
+            x-show="show"
+            x-transition
+            x-init="setTimeout(() => show = false, 3000)"
+            class="bg-red-100 border border-red-400 text-red-800 px-4 py-3 rounded-md shadow">
+            {{ session('error') }}
+        </div>
+        @endif
 
         {{-- Tabel pengaduan --}}
         <div class="overflow-x-auto bg-white shadow rounded-xl">
             <table class="w-full border-collapse text-left">
                 <thead>
-                    <tr class="bg-gray-100 text-gray-700 text-sm">
+                    <tr class="bg-gradient-to-r from-indigo-600 to-blue-500 text-white text-center text-sm">
                         <th class="px-6 py-3 border-b">No</th>
                         <th class="px-6 py-3 border-b">Judul</th>
                         <th class="px-6 py-3 border-b">Isi</th>
@@ -19,7 +36,7 @@
                 </thead>
                 <tbody class="text-sm text-gray-600">
                     @forelse ($riwayat as $index => $item)
-                    <tr class="hover:bg-gray-50 transition">
+                    <tr class="hover:bg-blue-50 transition">
                         <td class="px-6 py-4 border-b">{{ $index + 1 }}</td>
                         <td class="px-6 py-4 border-b font-semibold">{{ $item->judul }}</td>
                         <td class="px-6 py-4 border-b">{{ Str::limit($item->isi, 50) }}</td>
@@ -41,6 +58,19 @@
                                     class="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600 transition">
                                     Lihat
                                 </a>
+                                <a href="{{ route('pengaduans.edit', $item->id) }}"
+                                    class="px-3 py-1 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 text-xs">
+                                    Edit
+                                </a>
+                                <form action="{{ route('pengaduans.destroyRiwayat', $item->id) }}" method="POST"
+                                    onsubmit="return confirm('Yakin ingin hapus pengaduan ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                        class="px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 text-xs">
+                                        Hapus
+                                    </button>
+                                </form>
                             </div>
 
                         </td>
