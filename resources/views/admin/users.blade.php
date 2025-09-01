@@ -33,7 +33,7 @@
             <div class="bg-white shadow-lg rounded-xl overflow-hidden border border-gray-100">
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left text-gray-600">
-                        <thead class="bg-gray-50 border-b text-gray-700 text-sm">
+                        <thead class="bg-gradient-to-r from-indigo-600 to-blue-500 text-white text-sm">
                             <tr>
                                 <th class="px-6 py-3 font-semibold">Nama</th>
                                 <th class="px-6 py-3 font-semibold">Email</th>

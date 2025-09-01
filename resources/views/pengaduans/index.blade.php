@@ -85,7 +85,7 @@
                                     class="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 text-xs">
                                     Lihat
                                 </a>
-                                @if(Auth::user()->role === 'admin' && $item->status != 'selesai')
+                                @if(Auth::user()->role === 'admin' && $item->status != 'proses')
                                 <form action="{{ route('pengaduans.destroy', $item->id) }}" method="POST"
                                     onsubmit="return confirm('Yakin ingin hapus pengaduan ini?')">
                                     @csrf
